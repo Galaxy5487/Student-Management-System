@@ -50,6 +50,104 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
+const DEFAULT_STUDENTS = [
+  {
+    id: 1,
+    student_id: 'MHIS-2024001',
+    full_name: 'Mohammed Faizan',
+    email: 'faizan.m@mhis.edu.in',
+    phone: '9876543210',
+    gender: 'Male',
+    course: 'Computer Science',
+    date_of_birth: '2003-04-12',
+    admission_date: '2024-06-10',
+    batch: '2024-2027',
+    previous_marks: '92% (552/600)',
+    address: 'No. 14 Main Road, Pernambut, Vellore - 635810',
+    parent_name: 'Mr. Syed Abdul',
+    parent_phone: '9876543211',
+    parent_occupation: 'Merchant',
+    created_at: '2024-06-10T10:00:00.000Z',
+    updated_at: '2024-06-10T10:00:00.000Z'
+  },
+  {
+    id: 2,
+    student_id: 'MHIS-2024002',
+    full_name: 'Kavitha Raman',
+    email: 'kavitha.r@mhis.edu.in',
+    phone: '9840123456',
+    gender: 'Female',
+    course: 'Business Administration',
+    date_of_birth: '2004-01-25',
+    admission_date: '2024-06-12',
+    batch: '2024-2027',
+    previous_marks: '89% (534/600)',
+    address: '22 Gandhi Street, Pernambut, Vellore - 635810',
+    parent_name: 'Mr. K. Raman',
+    parent_phone: '9840123457',
+    parent_occupation: 'Teacher',
+    created_at: '2024-06-12T11:30:00.000Z',
+    updated_at: '2024-06-12T11:30:00.000Z'
+  },
+  {
+    id: 3,
+    student_id: 'MHIS-2024003',
+    full_name: 'Syed Zameer Ahmed',
+    email: 'zameer.s@mhis.edu.in',
+    phone: '9790887766',
+    gender: 'Male',
+    course: 'Computer Science',
+    date_of_birth: '2003-09-18',
+    admission_date: '2024-06-15',
+    batch: '2024-2027',
+    previous_marks: '95% (570/600)',
+    address: 'No. 5 Mosque Street, Pernambut, Vellore - 635810',
+    parent_name: 'Mr. Syed Bashir',
+    parent_phone: '9790887767',
+    parent_occupation: 'Business',
+    created_at: '2024-06-15T09:15:00.000Z',
+    updated_at: '2024-06-15T09:15:00.000Z'
+  },
+  {
+    id: 4,
+    student_id: 'MHIS-2024004',
+    full_name: 'Ananya Sharma',
+    email: 'ananya.s@mhis.edu.in',
+    phone: '9944556677',
+    gender: 'Female',
+    course: 'Mathematics',
+    date_of_birth: '2004-06-05',
+    admission_date: '2024-06-18',
+    batch: '2024-2027',
+    previous_marks: '91% (546/600)',
+    address: '8 Bus Stand Road, Pernambut, Vellore - 635810',
+    parent_name: 'Mr. Suresh Sharma',
+    parent_phone: '9944556678',
+    parent_occupation: 'Bank Manager',
+    created_at: '2024-06-18T14:20:00.000Z',
+    updated_at: '2024-06-18T14:20:00.000Z'
+  },
+  {
+    id: 5,
+    student_id: 'MHIS-2024005',
+    full_name: 'Tariq Imran',
+    email: 'tariq.i@mhis.edu.in',
+    phone: '9176112233',
+    gender: 'Male',
+    course: 'Psychology',
+    date_of_birth: '2003-11-30',
+    admission_date: '2024-06-20',
+    batch: '2024-2027',
+    previous_marks: '87% (522/600)',
+    address: '19 College Road, Pernambut, Vellore - 635810',
+    parent_name: 'Mr. Imran Khan',
+    parent_phone: '9176112234',
+    parent_occupation: 'Government Service',
+    created_at: '2024-06-20T16:45:00.000Z',
+    updated_at: '2024-06-20T16:45:00.000Z'
+  }
+];
+
 function loadFromStorage(){
   try{
     const raw = localStorage.getItem(DB_KEY);
@@ -79,15 +177,11 @@ async function loadStudents(){
   await delay(420);
   try{
     const data = loadFromStorage();
-    const demoNames = ['Aisha Johnson','David Chen','Sofia Martinez','James Wilson','Priya Patel'];
-    const isDemoData = Array.isArray(data) && data.some(s => demoNames.includes(s.full_name));
-
-    if(isDemoData){
-      localStorage.setItem(DB_KEY, JSON.stringify([]));
-      students = [];
+    if(!Array.isArray(data) || data.length === 0){
+      students = [...DEFAULT_STUDENTS];
+      saveToStorage();
     } else {
-      students = Array.isArray(data) ? data : [];
-      if(!Array.isArray(data)) localStorage.setItem(DB_KEY, JSON.stringify([]));
+      students = data;
     }
     renderAll();
   }catch(e){
@@ -290,26 +384,70 @@ function navigate(view){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+function updateScrollLock(){
+  const hasOpenModal = !document.getElementById('studentModal').classList.contains('hidden') ||
+                       !document.getElementById('viewModal').classList.contains('hidden') ||
+                       !document.getElementById('deleteModal').classList.contains('hidden');
+  const isSidebarOpen = document.getElementById('sidebar').classList.contains('open');
+  if(hasOpenModal || isSidebarOpen){
+    document.body.classList.add('body-scroll-lock');
+  } else {
+    document.body.classList.remove('body-scroll-lock');
+  }
+}
+
 function toggleSidebar(){
   const sb = document.getElementById('sidebar');
   const ov = document.getElementById('overlay');
   sb.classList.toggle('open');
   ov.classList.toggle('show', sb.classList.contains('open'));
+  updateScrollLock();
 }
+
 function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
+  updateScrollLock();
+}
+
+function toggleMobileSearch(){
+  const container = document.getElementById('mobileSearchContainer');
+  if(!container) return;
+  const isHidden = container.classList.contains('hidden');
+  container.classList.toggle('hidden', !isHidden);
+  if(isHidden){
+    const input = document.getElementById('mobileSearchInput');
+    if(input){
+      input.value = filters.search;
+      setTimeout(()=> input.focus(), 60);
+    }
+  }
 }
 
 function onGlobalSearch(v){
   filters.search=v;
-  document.getElementById('searchInput').value=v;
+  const topInput = document.getElementById('topSearch');
+  const mobInput = document.getElementById('mobileSearchInput');
+  const mainInput = document.getElementById('searchInput');
+  if(topInput && topInput.value !== v) topInput.value = v;
+  if(mobInput && mobInput.value !== v) mobInput.value = v;
+  if(mainInput && mainInput.value !== v) mainInput.value = v;
+
   if(document.getElementById('view-students').classList.contains('hidden')){
     navigate('students');
   }
   renderStudentsTable();
 }
-function onSearch(v){ filters.search=v; document.getElementById('topSearch').value=v; renderStudentsTable(); }
+
+function onSearch(v){
+  filters.search=v;
+  const topInput = document.getElementById('topSearch');
+  const mobInput = document.getElementById('mobileSearchInput');
+  if(topInput) topInput.value=v;
+  if(mobInput) mobInput.value=v;
+  renderStudentsTable();
+}
+
 function onGenderFilter(v){ filters.gender=v; renderStudentsTable(); }
 function onCourseFilter(v){ filters.course=v; renderStudentsTable(); }
 function onSortFilter(v){
@@ -330,8 +468,11 @@ function toggleSort(field){
 }
 function clearFilters(){
   filters={search:'',gender:'all',course:'all'};
-  document.getElementById('searchInput').value='';
-  document.getElementById('topSearch').value='';
+  const inputs = ['searchInput', 'topSearch', 'mobileSearchInput'];
+  inputs.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
   document.getElementById('genderFilter').value='all';
   document.getElementById('courseFilter').value='all';
   renderStudentsTable();
@@ -348,6 +489,7 @@ function openAddModal(){
   const autoIdEl = document.getElementById('f_student_id');
   autoIdEl.value = generateAdmissionNumber();
   document.getElementById('studentModal').classList.remove('hidden');
+  updateScrollLock();
   setTimeout(()=>autoIdEl.focus(),50);
 }
 function openEditModal(id){
@@ -373,11 +515,13 @@ function openEditModal(id){
   document.getElementById('f_parent_phone').value=s.parent_phone || '';
   document.getElementById('f_parent_occupation').value=s.parent_occupation || '';
   document.getElementById('studentModal').classList.remove('hidden');
+  updateScrollLock();
 }
 function closeStudentModal(){
   document.getElementById('studentModal').classList.add('hidden');
   editingId=null;
   clearErrors();
+  updateScrollLock();
 }
 function openViewModal(id){
   const s = students.find(x=>x.id===id);
@@ -404,8 +548,13 @@ function openViewModal(id){
   document.getElementById('v_created').textContent=formatDate(s.created_at);
   document.getElementById('v_updated').textContent=formatDate(s.updated_at);
   document.getElementById('viewModal').classList.remove('hidden');
+  updateScrollLock();
 }
-function closeViewModal(){ document.getElementById('viewModal').classList.add('hidden'); viewingId=null; }
+function closeViewModal(){
+  document.getElementById('viewModal').classList.add('hidden');
+  viewingId=null;
+  updateScrollLock();
+}
 function editFromView(){ if(viewingId){ const id=viewingId; closeViewModal(); openEditModal(id); } }
 function openDeleteModal(id){
   const s = students.find(x=>x.id===id);
@@ -414,8 +563,13 @@ function openDeleteModal(id){
   document.getElementById('deleteName').textContent=s.full_name;
   document.getElementById('deleteSid').textContent=s.student_id;
   document.getElementById('deleteModal').classList.remove('hidden');
+  updateScrollLock();
 }
-function closeDeleteModal(){ document.getElementById('deleteModal').classList.add('hidden'); pendingDeleteId=null; }
+function closeDeleteModal(){
+  document.getElementById('deleteModal').classList.add('hidden');
+  pendingDeleteId=null;
+  updateScrollLock();
+}
 async function confirmDelete(){
   if(pendingDeleteId==null) return;
   const btn = document.querySelector('#deleteModal button:last-child');

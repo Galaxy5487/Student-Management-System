@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Merit Haji Ismail Sahib Arts & Science College, Pernambut</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,20 +19,23 @@
         <h1>Merit Haji Ismail Sahib<br>Arts & Science College</h1>
         <p>Pernambut</p>
       </div>
+      <button class="sidebar-close" id="sidebarCloseBtn" aria-label="Close sidebar" onclick="closeSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
     </div>
     <nav class="nav">
       <div class="nav-label">Main Menu</div>
       <button class="nav-item active" data-view="dashboard" onclick="navigate('dashboard')">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
-        Dashboard
+        <span>Dashboard</span>
       </button>
       <button class="nav-item" data-view="students" onclick="navigate('students')">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Students
+        <span>Students</span>
       </button>
-      <button class="nav-item" onclick="openAddModal()">
+      <button class="nav-item nav-action" onclick="openAddModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
-        Add Student
+        <span>Add Student</span>
       </button>
     </nav>
   </aside>
@@ -41,9 +44,9 @@
     <header class="topbar">
       <div class="topbar-left">
         <button class="hamburger" id="hamburger" aria-label="Toggle menu" onclick="toggleSidebar()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
-        <div>
+        <div class="topbar-titles">
           <div class="page-title" id="pageTitle">Merit Haji Ismail Sahib Arts & Science College</div>
           <div class="page-sub" id="pageSub">Pernambut • Student Dashboard</div>
         </div>
@@ -53,12 +56,23 @@
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
           <input id="topSearch" type="search" placeholder="Search students..." oninput="onGlobalSearch(this.value)">
         </label>
-        <button class="btn btn-primary" onclick="openAddModal()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-          Add Student
+        <button class="btn-icon-mobile" id="mobileSearchBtn" aria-label="Toggle search" onclick="toggleMobileSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        </button>
+        <button class="btn btn-primary btn-header-add" onclick="openAddModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Add Student</span>
         </button>
       </div>
     </header>
+
+    <div class="mobile-search-bar hidden" id="mobileSearchContainer">
+      <div class="mobile-search-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="mobileSearchInput" type="search" placeholder="Search by name, ID, course..." oninput="onGlobalSearch(this.value)">
+        <button class="mobile-search-close" aria-label="Close search" onclick="toggleMobileSearch()">✕</button>
+      </div>
+    </div>
 
     <div class="content">
       <!-- DASHBOARD -->
